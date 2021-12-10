@@ -31,7 +31,7 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 }
 
 // Handler ...
-func (a *App) Handle(method string, path string, handler Handler, mw ...Middleware) {
+func (a *App) Handle(method string, group string, path string, handler Handler, mw ...Middleware) {
 
 	// First wrap handler specific middleware around this handler.
 	handler = wrapMiddleware(mw, handler)
@@ -48,7 +48,11 @@ func (a *App) Handle(method string, path string, handler Handler, mw ...Middlewa
 			return
 		}
 	}
-	a.ContextMux.Handle(method, path, h)
+	finalPath := path
+	if group != "" {
+		finalPath = "/" + group + path
+	}
+	a.ContextMux.Handle(method, finalPath, h)
 }
 
 // SignalShutdown is used to gracefully shutdown the app when an integrity

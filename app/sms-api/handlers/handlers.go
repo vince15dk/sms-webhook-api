@@ -12,9 +12,15 @@ import (
 func API(build string, shutdown chan os.Signal, log *log.Logger) *api.App {
 	app := api.NewApp(shutdown, mid.Logger(log), mid.Errors(log))
 
+	v1(app, build)
+
+	return app
+}
+
+func v1(app *api.App, build string) {
+	const version = "v1"
 	ug := WebHook{
 		build: build,
 	}
-	app.Handle(http.MethodPost, "/v1/group/sms", ug.sendAPItoSMS)
-	return app
+	app.Handle(http.MethodPost, version, "/:groups/sms", ug.sendAPItoSMS)
 }

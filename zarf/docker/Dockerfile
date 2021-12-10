@@ -4,7 +4,7 @@ ENV CGO_ENABLED 0
 
 RUN mkdir -p /service
 
-COPY go.* /service
+COPY go.* /service/
 
 WORKDIR /service
 
@@ -20,7 +20,7 @@ RUN apk --no-cache add tzdata && \
     cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     echo "Asia/Seoul" > /etc/timezone
 
-COPY --from=build_sms-api /service/app/sms-api/sms-webhook-api /service/sms-webhook-api
+COPY --from=build_sms-api /service/sms-webhook-api /service/sms-webhook-api
 WORKDIR /service
 CMD ["./sms-webhook-api"]
 
