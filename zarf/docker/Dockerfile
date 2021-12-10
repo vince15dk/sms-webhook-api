@@ -2,9 +2,11 @@ FROM golang:1.15.2 as build_sms-api
 
 ENV CGO_ENABLED 0
 
-WORKDIR /service
+RUN mkdir -p /service
 
 COPY go.* /service
+
+WORKDIR /service
 
 RUN go mod download
 
