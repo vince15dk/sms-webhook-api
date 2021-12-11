@@ -22,5 +22,5 @@ func v1(app *api.App, build string) {
 	ug := WebHook{
 		build: build,
 	}
-	app.Handle(http.MethodPost, version, "/:groups/sms", ug.sendAPItoSMS)
+	app.Handle(http.MethodPost, version, "/:dep/:groups/sms", ug.sendAPItoSMS)
 }

@@ -9,16 +9,12 @@ import (
 	"github.com/vince15dk/sms-webhook-api/foundation/api"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 const (
-	smsurl = "https://api-sms.cloud.toast.com/sms/v3.0/appKeys/g00TSSkVtzDp4qwX/sender/sms"
-	key    = "UhUXiDfu"
-	sender = "01045745984"
-)
-
-var (
-	recipients = []string{"01045745984"}
+	url    = "https://api-sms.cloud.toast.com/sms/v3.0/appKeys"
+	sender    = "01045745984"
 )
 
 type WebHook struct {
@@ -41,18 +37,42 @@ func Unmarshal(r *http.Request, g interface{}) (interface{}, error) {
 	return g, nil
 }
 
-func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+func ParsingJsonData(name string) (*scheme.DepUsers, error) {
+	jsonFile, err := os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+	var u scheme.DepUsers
+	bytes, err := ioutil.ReadAll(jsonFile)
+	err = json.Unmarshal(bytes, &u)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
 
+func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	var g interface{}
-	h := generateHeader(&http.Header{})
 	var ListRecipients []scheme.RecipientList
 	var sms scheme.SMSRequest
+	var smsurl string
 
-	for _, v := range recipients {
-		ListRecipients = append(ListRecipients, scheme.RecipientList{
-			RecipientNo: v,
-			CountryCode: "82",
-		})
+	h := generateHeader(&http.Header{})
+	//u, err := ParsingJsonData("/Users/nhn/Desktop/Linux/Go/sms-webhook-api/app/sms-api/external/dep_users.json")
+	u, err := ParsingJsonData("/service/dep_users.json")
+	if err != nil{
+		return err
+	}
+	if Param(r, "dep") == u.DepGroup{
+		smsurl = fmt.Sprintf("%s/%s/%s", url, u.AppKey,"sender/sms")
+		h.Set("X-Secret-Key", u.SecretKey)
+		for _, v := range u.Users {
+			ListRecipients = append(ListRecipients, scheme.RecipientList{
+				RecipientNo: v.PhoneNo,
+				CountryCode: "82",
+			})
+		}
 	}
 
 	switch Param(r, "groups") {
@@ -62,13 +82,23 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 			return err
 		}
 		g = s
-		gsms := scheme.SMSRequest{
+		sms = scheme.SMSRequest{
 			Body:          fmt.Sprintf("%s", g.(*scheme.GrafanaLog).Message[:81]),
 			SendNo:        sender,
 			RecipientList: ListRecipients,
 		}
-		sms = gsms
+
 	case "argocd":
+		s, err := Unmarshal(r, &scheme.Argocd{})
+		if err != nil {
+			return err
+		}
+		g = s
+		sms = scheme.SMSRequest{
+			Body:          fmt.Sprintf("%s", g.(*scheme.Argocd).Text),
+			SendNo:        sender,
+			RecipientList: ListRecipients,
+		}
 	}
 
 	PostHandlerFunc(smsurl, sms, h)
@@ -78,6 +108,5 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 
 func generateHeader(h *http.Header) *http.Header {
 	h.Set("Content-Type", "application/json")
-	h.Set("X-Secret-Key", key)
 	return h
 }
