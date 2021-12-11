@@ -60,7 +60,7 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 
 	h := generateHeader(&http.Header{})
 	//u, err := ParsingJsonData("/Users/nhn/Desktop/Linux/Go/sms-webhook-api/app/sms-api/external/dep_users.json")
-	u, err := ParsingJsonData("/service/dep_users.json")
+	u, err := ParsingJsonData("/config/dep_users.json")
 	if err != nil{
 		return err
 	}
