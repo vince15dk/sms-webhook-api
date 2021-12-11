@@ -14,7 +14,6 @@ import (
 
 const (
 	url    = "https://api-sms.cloud.toast.com/sms/v3.0/appKeys"
-	sender    = "01045745984"
 )
 
 type WebHook struct {
@@ -57,23 +56,28 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 	var ListRecipients []scheme.RecipientList
 	var sms scheme.SMSRequest
 	var smsurl string
-
+	var sender string
 	h := generateHeader(&http.Header{})
 	//u, err := ParsingJsonData("/Users/nhn/Desktop/Linux/Go/sms-webhook-api/app/sms-api/external/dep_users.json")
 	u, err := ParsingJsonData("/config/dep_users.json")
 	if err != nil{
 		return err
 	}
-	if Param(r, "dep") == u.DepGroup{
-		smsurl = fmt.Sprintf("%s/%s/%s", url, u.AppKey,"sender/sms")
-		h.Set("X-Secret-Key", u.SecretKey)
-		for _, v := range u.Users {
-			ListRecipients = append(ListRecipients, scheme.RecipientList{
-				RecipientNo: v.PhoneNo,
-				CountryCode: "82",
-			})
+
+	for _, v := range u.DepGroup{
+		if Param(r, "dep") == v.GroupName{
+			smsurl = fmt.Sprintf("%s/%s/%s", url, v.AppKey,"sender/sms")
+			h.Set("X-Secret-Key", v.SecretKey)
+			for _, n := range v.Users {
+				ListRecipients = append(ListRecipients, scheme.RecipientList{
+					RecipientNo: n.PhoneNo,
+					CountryCode: "82",
+				})
+			}
+			sender = v.Sender
 		}
 	}
+
 
 	switch Param(r, "groups") {
 	case "grafana":

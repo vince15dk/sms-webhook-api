@@ -1,9 +1,14 @@
 package scheme
 
 type DepUsers struct {
+	DepGroup []DepGroup `json:"depGroup"`
+}
+
+type DepGroup struct {
 	AppKey    string  `json:"appKey"`
 	SecretKey string  `json:"secretKey"`
-	DepGroup  string  `json:"depGroup"`
+	GroupName string  `json:"groupName"`
+	Sender    string  `json:"sender"`
 	Users     []Users `json:"users"`
 }
 

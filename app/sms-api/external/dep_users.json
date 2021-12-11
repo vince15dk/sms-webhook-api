@@ -1,12 +1,17 @@
 {
-  "appKey": "g00TSSkVtzDp4qwX",
-  "secretKey": "VfEvY5gWiHRYRPlv",
-  "depGroup": "srep",
-  "users": [
+  "depGroup": [
     {
-      "name": "sukjookim",
-      "phoneNo": "01045745984",
-      "email": "sukjoo.kim@nhn.com"
+      "sender": "01045745984",
+      "appKey": "g00TSSkVtzDp4qwX",
+      "secretKey": "VfEvY5gWiHRYRPlv",
+      "groupName": "srep",
+      "users": [
+        {
+          "name": "sukjookim",
+          "phoneNo": "01045745984",
+          "email": "sukjoo.kim@nhn.com"
+        }
+      ]
     }
   ]
 }
