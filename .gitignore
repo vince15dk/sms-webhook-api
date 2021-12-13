@@ -12,6 +12,7 @@
 # Folders
 _obj
 _test
+app/sms-api/external
 
 # Editor files
 .idea/
