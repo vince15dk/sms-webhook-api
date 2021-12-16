@@ -25,6 +25,9 @@ func v1(app *api.App, build string) {
 	ug := WebHook{
 		build: build,
 	}
+
+	// it opens its endpoint for incoming post request
+	// plays as a webhook handler and serves the Post Request back to nhn sms api server
 	// :dep is the department/organization group name (e.g. srep)
 	// :groups is the application name (e.g. argocd)
 	app.Handle(http.MethodPost, version, "/:dep/:groups/sms", ug.sendAPItoSMS)

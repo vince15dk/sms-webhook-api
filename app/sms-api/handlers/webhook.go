@@ -20,22 +20,27 @@ type WebHook struct {
 	build string
 }
 
+// Param takes url parameters into map
 func Param(r *http.Request, key string) string {
 	m := httptreemux.ContextParams(r.Context())
 	return m[key]
 }
 
+// Unmarshal unmarshals json into empty interface
 func Unmarshal(r *http.Request, g interface{}) (interface{}, error) {
+
 	//json.NewDecoder(r.Body).Decode(g)
 	bytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
 	}
+
 	defer r.Body.Close()
 	err = json.Unmarshal(bytes, g)
 	return g, nil
 }
 
+// ParsingJsonData opens config, and unmarshals json structure into DepUsers
 func ParsingJsonData(name string) (*scheme.DepUsers, error) {
 	jsonFile, err := os.Open(name)
 	if err != nil {
