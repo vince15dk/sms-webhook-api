@@ -32,7 +32,7 @@ vi /config/dep_users.json
           "sender": "xx",
           "appKey": "xx",
           "secretKey": "xx",
-          "groupName": "srep",
+          "groupName": "{dep}",
           "users": [
             {
               "name": "rabbit",
