@@ -1,9 +1,11 @@
 package scheme
 
+// DepUsers Department/Organization Group
 type DepUsers struct {
 	DepGroup []DepGroup `json:"depGroup"`
 }
 
+// DepGroup
 type DepGroup struct {
 	AppKey    string  `json:"appKey"`
 	SecretKey string  `json:"secretKey"`

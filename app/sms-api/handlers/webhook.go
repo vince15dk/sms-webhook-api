@@ -56,23 +56,31 @@ func ParsingJsonData(name string) (*scheme.DepUsers, error) {
 	return &u, nil
 }
 
+// sendAPItoSMS post request to SMS API server
 func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	var g interface{}
 	var ListRecipients []scheme.RecipientList
 	var sms scheme.SMSRequest
 	var smsurl string
 	var sender string
+
+	// generating a new header
 	h := generateHeader(&http.Header{})
+
 	//u, err := ParsingJsonData("/Users/nhn/Desktop/Linux/Go/sms-webhook-api/app/sms-api/external/dep_users.json")
 	u, err := ParsingJsonData("/config/dep_users.json")
 	if err != nil{
 		return err
 	}
 
+	// v1/:dep/:groups/sms
 	for _, v := range u.DepGroup{
 		if Param(r, "dep") == v.GroupName{
+			// generates a full SMS API url
 			smsurl = fmt.Sprintf("%s/%s/%s", url, v.AppKey,"sender/sms")
+			// updates secret
 			h.Set("X-Secret-Key", v.SecretKey)
+			// add users from DepGroup whose GroupName is matched with :dep
 			for _, n := range v.Users {
 				ListRecipients = append(ListRecipients, scheme.RecipientList{
 					RecipientNo: n.PhoneNo,
@@ -83,7 +91,8 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 		}
 	}
 
-
+	// parsing OOS struct to SMS Api request body struct
+	// v1/:dep/:groups/sms
 	switch Param(r, "groups") {
 	case "grafana":
 		s, err := Unmarshal(r, &scheme.GrafanaLog{})
@@ -91,6 +100,7 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 			return err
 		}
 		g = s
+		// Parsing grafanaLog's message into SMS API body struct
 		sms = scheme.SMSRequest{
 			Body:          fmt.Sprintf("%s", g.(*scheme.GrafanaLog).Message[:81]),
 			SendNo:        sender,
@@ -103,6 +113,7 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 			return err
 		}
 		g = s
+		// Parsing Argocd's message into SMS API body struct
 		sms = scheme.SMSRequest{
 			Body:          fmt.Sprintf("%s", g.(*scheme.Argocd).Text),
 			SendNo:        sender,
