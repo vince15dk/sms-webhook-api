@@ -11,12 +11,17 @@ make run
 ```bash
 Post :8080/{dep}/{groups}/sms
 ```
+<br/>
 
 ### For grafana alert webhook usage
 * http://{sms-webhook-api}/v1/srep/grafana/sms
 
+<br/>
+
 ### For argocd notification webhook usage
 * http://{sms-webhook-api}/v1/srep/argocd/sms
+
+<br/>
 
 ### Where to store config
 ```bash
