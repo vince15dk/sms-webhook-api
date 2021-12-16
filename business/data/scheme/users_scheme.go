@@ -5,7 +5,7 @@ type DepUsers struct {
 	DepGroup []DepGroup `json:"depGroup"`
 }
 
-// DepGroup
+// DepGroup for DepUsers
 type DepGroup struct {
 	AppKey    string  `json:"appKey"`
 	SecretKey string  `json:"secretKey"`
@@ -14,6 +14,7 @@ type DepGroup struct {
 	Users     []Users `json:"users"`
 }
 
+// Users for DepGroup
 type Users struct {
 	Name    string `json:"name,omitempty"`
 	PhoneNo string `json:"phoneNo"`

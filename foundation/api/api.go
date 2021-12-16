@@ -30,7 +30,7 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 	return &app
 }
 
-// Handler ...
+// Handle is custom Handler func that wraps with middleware
 func (a *App) Handle(method string, group string, path string, handler Handler, mw ...Middleware) {
 
 	// First wrap handler specific middleware around this handler.
@@ -48,6 +48,8 @@ func (a *App) Handle(method string, group string, path string, handler Handler, 
 			return
 		}
 	}
+
+	// version control
 	finalPath := path
 	if group != "" {
 		finalPath = "/" + group + path

@@ -1,11 +1,13 @@
 package scheme
 
+// EvalMatches for GrafanaLog
 type EvalMatches struct {
 	Value  float64 `json:"value"`
 	Metric string  `json:"metric"`
 	Tags   Tags`json:"tags"`
 }
 
+// Tags for EvalMatches
 type Tags struct {
 	AppKubernetesIoComponent string `json:"app_kubernetes_io_component"`
 	AppKubernetesIoInstance  string `json:"app_kubernetes_io_instance"`
@@ -20,6 +22,7 @@ type Tags struct {
 	Stream                   string `json:"stream"`
 }
 
+// GrafanaLog struct
 type GrafanaLog struct {
 	Title       string        `json:"title"`
 	RuleID      int           `json:"ruleId"`

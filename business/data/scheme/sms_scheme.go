@@ -1,5 +1,6 @@
 package scheme
 
+// RecipientList for SMSRequest
 type RecipientList struct {
 	RecipientNo              string `json:"recipientNo"`
 	CountryCode              string `json:"countryCode"`
@@ -7,6 +8,7 @@ type RecipientList struct {
 	RecipientGroupingKey     string `json:"recipientGroupingKey,omitempty"`
 }
 
+// SMSRequest struct
 type SMSRequest struct {
 	TemplateID        string          `json:"templateId,omitempty"`
 	Body              string          `json:"body"`

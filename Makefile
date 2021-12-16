@@ -5,10 +5,10 @@ VERSION := 1.0
 docker-build: image-build image-push
 
 image-build:
-	docker build -t vince15dk/sms-webhook-api:$(version) -f zarf/docker/Dockerfile .
+	docker build -t $(dockerhub_id)/sms-webhook-api:$(version) -f zarf/docker/Dockerfile .
 
 image-push:
-	docker push vince15dk/sms-webhook-api:$(version)
+	docker push $(dockerhub_id)/sms-webhook-api:$(version)
 
 run:
 	go run app/sms-api/*.go

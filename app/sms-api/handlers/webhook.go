@@ -68,6 +68,7 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 	h := generateHeader(&http.Header{})
 
 	//u, err := ParsingJsonData("/Users/nhn/Desktop/Linux/Go/sms-webhook-api/app/sms-api/external/dep_users.json")
+	// Read config file
 	u, err := ParsingJsonData("/config/dep_users.json")
 	if err != nil{
 		return err
@@ -100,9 +101,9 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 			return err
 		}
 		g = s
-		// Parsing grafanaLog's message into SMS API body struct
+		// Parsing grafanaLog's message into SMS API body struct originally [:81] for fit in size
 		sms = scheme.SMSRequest{
-			Body:          fmt.Sprintf("%s", g.(*scheme.GrafanaLog).Message[:81]),
+			Body:          fmt.Sprintf("%s", g.(*scheme.GrafanaLog).Message),
 			SendNo:        sender,
 			RecipientList: ListRecipients,
 		}
@@ -121,11 +122,13 @@ func (wh WebHook) sendAPItoSMS(ctx context.Context, w http.ResponseWriter, r *ht
 		}
 	}
 
+	// Call Post Handler
 	PostHandlerFunc(smsurl, sms, h)
 
 	return api.Respond(ctx, w, nil, http.StatusOK)
 }
 
+// generateHeader presets Content-Type to application/json
 func generateHeader(h *http.Header) *http.Header {
 	h.Set("Content-Type", "application/json")
 	return h
