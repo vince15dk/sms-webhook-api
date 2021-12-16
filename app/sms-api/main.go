@@ -13,9 +13,10 @@ import (
 	"time"
 )
 
-// build is the git version of this program. IT is set using build flags in the makefile
+// build is the git version of this program. It is set using build flags in build
 var build = "develop"
 
+// main execution
 func main(){
 	log := log.New(os.Stdout, "SMS : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	if err := run(log); err != nil{
@@ -24,10 +25,11 @@ func main(){
 	}
 }
 
+// run sms-webhook-api web server
 func run(log *log.Logger) error{
+
 	// =========================================================================
 	// Configuration
-
 	var cfg struct{
 		conf.Version
 		Web struct{
@@ -41,6 +43,7 @@ func run(log *log.Logger) error{
 	cfg.Version.SVN = build
 	cfg.Version.Desc = "copyright v1.0.0"
 
+	// parse the arguments from conf
 	if err := conf.Parse(os.Args[1:], "SMS", &cfg); err != nil{
 		switch err{
 		case conf.ErrHelpWanted:
@@ -87,7 +90,7 @@ func run(log *log.Logger) error{
 	}
 
 	// Make a channel to listen for errors coming from the listener. Use a
-	// buffered channel so the goroutine can exit if we don't collect this error.
+	// buffered channel so the goroutine can exit
 	serverErrors := make(chan error, 1)
 
 	// Start the service listening for requests.
@@ -95,6 +98,7 @@ func run(log *log.Logger) error{
 		log.Printf("main: API listening on %s", api.Addr)
 		serverErrors <- api.ListenAndServe()
 	}()
+
 	// =========================================================================
 	// Shutdown
 
@@ -111,7 +115,7 @@ func run(log *log.Logger) error{
 		defer cancel()
 
 		// Asking listener to shutdown and shed load.
-		// hits block until one of theses happen when either all the requests that are in flight at the time we ake for the shutdown completely which is what we want or timeout occurs
+		// hits block until one of theses happen when either all the requests that are in flight at the time we ask for the shutdown completely which is what we want or timeout occurs
 		if err := api.Shutdown(ctx); err != nil{
 			// when timeout occurs we call this method, hopefully we do not have to do this since timeout is long enough
 			api.Close()
